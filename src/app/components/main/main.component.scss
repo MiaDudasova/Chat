@@ -126,7 +126,8 @@
           font-size: 15px;
           font-weight: 0;
 
-          .showDetail, .startChat {
+          .showDetail,
+          .startChat {
             width: 48%;
             height: 70%;
             background-color: #7b8994;
@@ -146,6 +147,8 @@
       border: 4px solid #47525d;
       border-radius: 5px;
       margin: 0px 10px;
+      overflow-y: auto;
+      overflow-x: hidden;
 
       .topPanel {
         width: 100%;
@@ -162,6 +165,11 @@
           display: flex;
           align-items: center;
         }
+
+        .closeDetails {
+          margin: 0px;
+          margin-right: 5%;
+        }
       }
 
       .pfp {
@@ -170,7 +178,7 @@
         background-color: #53f4ff;
         border-radius: 200px;
         border: 6px solid #47525d;
-        margin: 10px auto;
+        margin: 15px auto;
 
         img {
           width: 100%;
@@ -178,22 +186,62 @@
         }
       }
 
+      .labels {
+        color: #47525d;
+        font-weight: 0;
+        font-size: 25px;
+        font-style: italic;
+        margin: 0px 5px;
+      }
+
+      .data {
+        font-size: 25px;
+      }
+
       .info {
         display: flex;
         width: 100%;
         margin: 0px auto;
         margin-left: 5%;
+      }
 
-        .labels {
-          color: #47525d;
-          font-weight: 0;
-          font-size: 25px;
-          font-style: italic;
-          margin: 0px 5px;
+      .showMore {
+        width: 90%;
+        display: flex;
+        margin: 10px auto;
+
+        .showData {
+          width: 20%;
+          border: 3px solid #47525d;
+          background-color: #7b8994;
+          aspect-ratio: 2/1;
+          justify-content: flex-start;
+          border-radius: 10px 0px 0px 10px;
+          color: #53f4ff;
         }
 
-        .data {
-          font-size: 25px;
+        .hideData {
+          width: 20%;
+          border: 3px solid #47525d;
+          background-color: #7b8994;
+          aspect-ratio: 2/1;
+          justify-content: flex-end;
+          border-radius: 0px 10px 10px 0px;
+          color: #53f4ff;
+        }
+
+        .moreData {
+          display: flex;
+          justify-content: center;
+          width: 60%;
+          margin: 0px auto;
+          margin-left: 5%;
+          margin-left: 20%;
+
+          .labels,
+          .data {
+            font-size: 20px;
+          }
         }
       }
     }
@@ -204,6 +252,64 @@
       background-color: #7b8994;
       border: 4px solid #47525d;
       border-radius: 5px;
+
+      .chat {
+        width: 100%;
+        height: 100%;
+
+        .topPanel {
+          width: 100%;
+          aspect-ratio: 6.4/1;
+          background-color: #47525d;
+          display: flex;
+          align-items: center;
+
+          .name {
+            width: 100%;
+            height: 100%;
+            margin: 0px 0px 0px 5%;
+            display: flex;
+            align-items: center;
+          }
+
+          .closeChat {
+            margin: 0px 5% 0px 0px;
+          }
+        }
+
+        .chatInput {
+          width: 90%;
+          aspect-ratio: 7/1;
+          margin: 15px auto;
+
+          .chat {
+            display: flex;
+            flex-direction: row;
+
+            .search-field {
+              width: 100%;
+              padding: 10px 35px 10px 15px;
+              border: none;
+              border-radius: 100px;
+              outline: none;
+              background-color: #f6fdff;
+            }
+
+            .search-button {
+              background: transparent;
+              border: none;
+              outline: none;
+              margin-left: -33px;
+            }
+
+            .search-button img {
+              width: 20px;
+              height: 20px;
+              object-fit: cover;
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -26,47 +26,91 @@
           <div class="showDetail" (click)="changeUserId(user.id)">
             Show details
           </div>
-          <div class="startChat">Start chat</div>
+          <div
+            class="startChat"
+            (click)="showChat = true; chatName = user.username"
+          >
+            Start chat
+          </div>
         </div>
       </div>
     </div>
     <div class="mid">
-      <div class="topPanel">
-        <h3 class="details">Details</h3>
-      </div>
-      <div class="pfp">
-        <img src="{{ userDetails.image }}" alt="user picture" />
-      </div>
-      <div class="info">
-        <div class="labels">
-          First Name:<br />Last Name:<br />Username:<br />Birthdate:<br />
-          Eye Color:<br />
-          University:<br />MAC Address:<br />IP Address:<br />City:<br />
+      <div class="userDetails" *ngIf="detailShow == true">
+        <div class="topPanel">
+          <h3 class="details">Details</h3>
+          <h6 class="closeDetails" (click)="closeDetail()">X</h6>
         </div>
-        <div class="data">
-          {{ userDetails.firstName }}<br />
-          {{ userDetails.lastName }}<br />
-          {{ userDetails.username }}<br />
-          {{ userDetails.birthDate }}<br />
-          {{ userDetails.eyeColor }}<br />
-          {{ userDetails.university }}<br />
-          {{ userDetails.macAddress }}<br />
-          {{ userDetails.ip }}<br />
-          {{ userDetails.company.address.city }}<br />
+        <div class="pfp">
+          <img src="{{ userDetails.image }}" alt="avatar" />
         </div>
-      </div>
-      <div class="showMore">
-        <button class="showBonus" (click)="getData()">Show more</button>
-        <div class="moreData" *ngIf="showMoreData == true">
-          Country: {{zipData.country}}<br />
-          Gender: {{genderData.gender}}
+        <div class="info">
+          <div class="labels">
+            First Name:<br />Last Name:<br />Username:<br />Birthdate:<br />
+            Eye Color:<br />
+            University:<br />MAC Address:<br />IP Address:<br />City:<br />
+          </div>
+          <div class="data">
+            {{ userDetails.firstName }}<br />
+            {{ userDetails.lastName }}<br />
+            {{ userDetails.username }}<br />
+            {{ userDetails.birthDate }}<br />
+            {{ userDetails.eyeColor }}<br />
+            {{ userDetails.university }}<br />
+            {{ userDetails.macAddress }}<br />
+            {{ userDetails.ip }}<br />
+            {{ userDetails.company.address.city }}<br />
+          </div>
+        </div>
+        <div class="showMore">
+          <button
+            class="showData"
+            (click)="getData()"
+            *ngIf="showMoreData == false"
+          >
+            Show more
+          </button>
+          <div class="moreData" *ngIf="showMoreData == true">
+            <div class="labels">Country:<br />Gender:</div>
+            <div class="data">
+              {{ zipData.country }}<br />{{ genderData.gender }}
+            </div>
+          </div>
+          <button
+            class="hideData"
+            (click)="hideData()"
+            *ngIf="showMoreData == true"
+          >
+            Hide
+          </button>
         </div>
       </div>
     </div>
     <div class="right">
-      <input (input)="onChar($event)" />
-      {{ userId }}
-      {{ userDetails.firstName }}
+      <div class="chat" *ngIf="showChat == true">
+        <div class="topPanel">
+          <h3 class="name">{{ chatName }}</h3>
+          <h6 class="closeChat" (click)="closeChat()">X</h6>
+        </div>
+        <div class="messages">
+          <div class="message">{{responseText}}</div>
+        </div>
+        <div class="chatInput">
+          <form class="chat" (ngSubmit)="handleSubmit($event)">
+            <input
+              placeholder="Message..."
+              name="text"
+              [(ngModel)]="text"
+              class="search-field"
+              (keyup)="handleKeyUp($event)"
+              (input)="onChar($event)"
+            />
+            <button type="submit" class="search-button">
+              <img src="../../../assets/images/send.svg" />
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>

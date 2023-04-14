@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Subject, merge } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map, switchMap } from 'rxjs/operators';
 import { User } from '../user';
@@ -17,7 +17,22 @@ export class MainComponent {
   prevInputValue: string = '';
   users: User[] = [];
   userClicked: boolean = false;
-  http: any;
+  userId: number = 5;
+  userDetails: any = {};
+  genderData: any = {};
+  zipData: any = {};
+  showMoreData: boolean = false;
+  detailShow: boolean = true;
+  chatName: string = 'Name';
+  showChat: boolean = true;
+
+  closeDetail() {
+    this.detailShow = false;
+  }
+
+  closeChat() {
+    this.showChat = false;
+  }
 
   userClick() {
     if (this.userClicked == false) {
@@ -44,13 +59,6 @@ export class MainComponent {
   async onClick(): Promise<void> {
     this.clickCount++;
   }
-
-  userId: number = 5;
-  userDetails: any = {};
-  genderData: any = {};
-  zipData: any = {};
-  showMoreData: boolean = false
-  check: any = ""
 
   constructor(private httpClient: HttpClient) {
     this.getUsers().subscribe((users) => {
@@ -93,24 +101,60 @@ export class MainComponent {
     console.log('getting bonus');
 
     this.httpClient
-      .get('https://api.zippopotam.us/us/' + this.userDetails.company.address.postalCode)
+      .get(
+        'https://api.zippopotam.us/us/' +
+          this.userDetails.company.address.postalCode
+      )
       .subscribe((zipData: any) => {
         this.zipData = zipData;
-        console.log(zipData)
+        console.log(zipData);
       });
 
     this.httpClient
       .get('https://api.genderize.io/?name=' + this.userDetails.firstName)
       .subscribe((genderData: any) => {
         this.genderData = genderData;
-        console.log(genderData)
+        console.log(genderData);
       });
 
-      this.showMoreData = true
+    this.showMoreData = true;
+  }
+
+  responseText: string = "";
+
+  postMessage(bodyText: string) {
+    const url = 'http://httpbin.org/post';
+    return this.httpClient.post<any>(url, { text: bodyText });
+  }
+
+  post(bodyText: string) {
+    this.postMessage(bodyText).subscribe((response) => {
+      this.responseText = response.json.text;
+    });
+  }
+
+  text:string = '';
+
+  handleSubmit(e: any) {
+    e.preventDefault();
+    alert(this.text);
+    this.post(this.text)
+    this.text = ""
+  }
+
+  handleKeyUp(e: any) {
+    if (e.keyCode === 13) {
+      this.handleSubmit(e)
+    }
+  }
+
+  hideData() {
+    this.showMoreData = false;
   }
 
   changeUserId(newUserId: number) {
-    this.showMoreData = false
+    this.showMoreData = false;
+    this.detailShow = true;
     this.userId = newUserId;
     this.getUserDetails().subscribe((userDetails) => {
       this.userDetails = userDetails;
