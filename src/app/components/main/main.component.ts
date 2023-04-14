@@ -24,7 +24,7 @@ export class MainComponent {
   genderData: any = {};
   zipData: any = {};
   showMoreData: boolean = false;
-  detailShow: boolean = true;
+  detailShow: boolean = false;
   chatName: string = '';
   showChat: boolean = false;
   allChats: Message[] = [];
@@ -38,8 +38,15 @@ export class MainComponent {
   text: string = '';
   loggedFirstName: string | null = localStorage.getItem('firstName');
   loggedLastName: string | null = localStorage.getItem('lastName');
-  loggedTime: string | null = localStorage.getItem('loginTime');
+  loggedInTime: string | null = localStorage.getItem('loginTime');
+  loggedTime: string = '';
   splittedLoggedTime: string[] = [];
+  logged: boolean = false;
+  totalLenResponses: number = 0;
+  logoutTime: string = '';
+  secondsLogged: number = 0;
+  minutesLogged: number = 0;
+  hoursLogged: number = 0;
 
   constructor(private httpClient: HttpClient, private router: Router) {
     this.getUsers().subscribe((users) => {
@@ -48,6 +55,7 @@ export class MainComponent {
           user.firstName !== this.loggedFirstName &&
           user.lastName !== this.loggedLastName
       );
+      console.log(users);
     });
 
     this.getUserDetails().subscribe((userDetails) => {
@@ -60,8 +68,10 @@ export class MainComponent {
       this.router.navigate(['./login']);
     }
 
-    if (this.loggedTime !== null) {
-      this.splittedLoggedTime = this.loggedTime.split(' ');
+    this.logged = true;
+
+    if (this.loggedInTime !== null) {
+      this.splittedLoggedTime = this.loggedInTime.split(' ');
       console.log(this.splittedLoggedTime);
       this.loggedTime =
         this.splittedLoggedTime[2] +
@@ -194,6 +204,13 @@ export class MainComponent {
         response: this.responseMessage,
         responseTime: this.responseTime,
       });
+
+      console.log(this.allChats);
+      this.totalLenResponses = this.allChats.reduce(
+        (acc, cur) => acc + cur.response.length,
+        0
+      );
+      console.log(this.totalLenResponses);
     });
   }
 
@@ -228,6 +245,23 @@ export class MainComponent {
   }
 
   logout(): void {
+    this.logged = false;
+    this.logoutTime = new Date().toString();
+    if (this.loggedInTime != null) {
+      this.secondsLogged =
+        Math.abs(
+          new Date(this.loggedInTime).getTime() -
+            new Date(this.logoutTime).getTime()
+        ) / 1000;
+    }
+    if (this.secondsLogged >= 60) {
+      this.minutesLogged = this.secondsLogged / 60;
+      this.secondsLogged = this.secondsLogged - 60 * this.minutesLogged;
+    }
+    if (this.minutesLogged >= 60) {
+      this.hoursLogged = this.minutesLogged / 60;
+      this.minutesLogged = this.minutesLogged - 60 * this.minutesLogged;
+    }
     localStorage.removeItem('log');
     this.router.navigate(['./']);
   }
