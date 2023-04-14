@@ -255,12 +255,12 @@ export class MainComponent {
         ) / 1000;
     }
     if (this.secondsLogged >= 60) {
-      this.minutesLogged = this.secondsLogged / 60;
-      this.secondsLogged = this.secondsLogged - 60 * this.minutesLogged;
+      this.minutesLogged = Math.floor(this.secondsLogged / 60);
+      this.secondsLogged = this.secondsLogged - Math.floor(60 * this.minutesLogged);
     }
     if (this.minutesLogged >= 60) {
-      this.hoursLogged = this.minutesLogged / 60;
-      this.minutesLogged = this.minutesLogged - 60 * this.minutesLogged;
+      this.hoursLogged = Math.floor(this.minutesLogged / 60);
+      this.minutesLogged = this.minutesLogged - Math.floor(60 * this.minutesLogged);
     }
     localStorage.removeItem('log');
     this.router.navigate(['./']);
