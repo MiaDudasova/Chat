@@ -1,0 +1,72 @@
+<div class="wrapper" (click)="onClick()">
+  <div class="header">
+    <div class="userInfo">
+      <div class="name">
+        <p class="firstName">First Name</p>
+        <p class="lastName">Last Name</p>
+      </div>
+      <p class="logTime">Login Time</p>
+    </div>
+    <div class="loggedInfo">
+      <p class="clicks">Clicks: {{ clickCount }}</p>
+      <p class="chars">Characters: {{ charCount }}</p>
+      <p class="chats">Chats opened: 0</p>
+    </div>
+    <div class="logout">
+      <div class="logoutButton">Logout</div>
+    </div>
+  </div>
+  <div class="body">
+    <div class="left">
+      <div *ngFor="let user of users" class="user" (click)="userClick()">
+        {{ user.firstName }}
+        {{ user.lastName }}
+        <span class="mail">{{ user.email }}</span>
+        <div class="userMore" *ngIf="userClicked == true">
+          <div class="showDetail" (click)="changeUserId(user.id)">
+            Show details
+          </div>
+          <div class="startChat">Start chat</div>
+        </div>
+      </div>
+    </div>
+    <div class="mid">
+      <div class="topPanel">
+        <h3 class="details">Details</h3>
+      </div>
+      <div class="pfp">
+        <img src="{{ userDetails.image }}" alt="user picture" />
+      </div>
+      <div class="info">
+        <div class="labels">
+          First Name:<br />Last Name:<br />Username:<br />Birthdate:<br />
+          Eye Color:<br />
+          University:<br />MAC Address:<br />IP Address:<br />City:<br />
+        </div>
+        <div class="data">
+          {{ userDetails.firstName }}<br />
+          {{ userDetails.lastName }}<br />
+          {{ userDetails.username }}<br />
+          {{ userDetails.birthDate }}<br />
+          {{ userDetails.eyeColor }}<br />
+          {{ userDetails.university }}<br />
+          {{ userDetails.macAddress }}<br />
+          {{ userDetails.ip }}<br />
+          {{ userDetails.company.address.city }}<br />
+        </div>
+      </div>
+      <div class="showMore">
+        <button class="showBonus" (click)="getData()">Show more</button>
+        <div class="moreData" *ngIf="showMoreData == true">
+          Country: {{zipData.country}}<br />
+          Gender: {{genderData.gender}}
+        </div>
+      </div>
+    </div>
+    <div class="right">
+      <input (input)="onChar($event)" />
+      {{ userId }}
+      {{ userDetails.firstName }}
+    </div>
+  </div>
+</div>
