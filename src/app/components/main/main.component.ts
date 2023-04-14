@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { BehaviorSubject, Subject, merge } from 'rxjs';
-import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap, map, switchMap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap, map, switchMap } from 'rxjs/operators';
 import { User } from '../user';
+import { Message } from '../message';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main',
@@ -14,6 +15,7 @@ import { User } from '../user';
 export class MainComponent {
   clickCount: number = 0;
   charCount: number = 0;
+  chatsCount: number = 0;
   prevInputValue: string = '';
   users: User[] = [];
   userClicked: boolean = false;
@@ -23,14 +25,68 @@ export class MainComponent {
   zipData: any = {};
   showMoreData: boolean = false;
   detailShow: boolean = true;
-  chatName: string = 'Name';
-  showChat: boolean = true;
+  chatName: string = '';
+  showChat: boolean = false;
+  allChats: Message[] = [];
+  tempChats: Message[] = [];
+  message: string = '';
+  responseMessage: string = '';
+  lenJsonText: number = 0;
+  lastOriginNum: number = 0;
+  postTime: string = '';
+  responseTime: string = '';
+  text: string = '';
+  loggedFirstName: string | null = localStorage.getItem('firstName');
+  loggedLastName: string | null = localStorage.getItem('lastName');
+  loggedTime: string | null = localStorage.getItem('loginTime');
+  splittedLoggedTime: string[] = [];
+
+  constructor(private httpClient: HttpClient, private router: Router) {
+    this.getUsers().subscribe((users) => {
+      this.users = users.filter(
+        (user) =>
+          user.firstName !== this.loggedFirstName &&
+          user.lastName !== this.loggedLastName
+      );
+    });
+
+    this.getUserDetails().subscribe((userDetails) => {
+      this.userDetails = userDetails;
+    });
+  }
+
+  ngOnInit() {
+    if (localStorage.getItem('log') != 't') {
+      this.router.navigate(['./login']);
+    }
+
+    if (this.loggedTime !== null) {
+      this.splittedLoggedTime = this.loggedTime.split(' ');
+      console.log(this.splittedLoggedTime);
+      this.loggedTime =
+        this.splittedLoggedTime[2] +
+        ' ' +
+        this.splittedLoggedTime[1] +
+        ' ' +
+        this.splittedLoggedTime[3] +
+        ' ' +
+        this.splittedLoggedTime[4];
+    }
+
+    this.userIdChanges().subscribe((userId) => {
+      this.userId = userId;
+      this.getUserDetails().subscribe((userDetails) => {
+        this.userDetails = userDetails;
+      });
+    });
+  }
 
   closeDetail() {
     this.detailShow = false;
   }
 
   closeChat() {
+    this.tempChats = [];
     this.showChat = false;
   }
 
@@ -60,23 +116,8 @@ export class MainComponent {
     this.clickCount++;
   }
 
-  constructor(private httpClient: HttpClient) {
-    this.getUsers().subscribe((users) => {
-      this.users = users;
-    });
-
-    this.getUserDetails().subscribe((userDetails) => {
-      this.userDetails = userDetails;
-    });
-  }
-
-  ngOnInit() {
-    this.userIdChanges().subscribe((userId) => {
-      this.userId = userId;
-      this.getUserDetails().subscribe((userDetails) => {
-        this.userDetails = userDetails;
-      });
-    });
+  async chatsOpened(): Promise<void> {
+    this.chatsCount++;
   }
 
   getUserDetails(): Observable<User[]> {
@@ -107,20 +148,16 @@ export class MainComponent {
       )
       .subscribe((zipData: any) => {
         this.zipData = zipData;
-        console.log(zipData);
       });
 
     this.httpClient
       .get('https://api.genderize.io/?name=' + this.userDetails.firstName)
       .subscribe((genderData: any) => {
         this.genderData = genderData;
-        console.log(genderData);
       });
 
     this.showMoreData = true;
   }
-
-  responseText: string = "";
 
   postMessage(bodyText: string) {
     const url = 'http://httpbin.org/post';
@@ -129,22 +166,51 @@ export class MainComponent {
 
   post(bodyText: string) {
     this.postMessage(bodyText).subscribe((response) => {
-      this.responseText = response.json.text;
+      console.log(response);
+      this.message = response.json.text;
+      this.lenJsonText = response.json.text.length;
+      this.lastOriginNum = Number(response.origin.slice(-1));
+      this.responseMessage = 'A'.repeat(this.lenJsonText + this.lastOriginNum);
+      const responseDate = new Date();
+      this.responseTime =
+        responseDate.getHours() +
+        ':' +
+        responseDate.getMinutes() +
+        ':' +
+        responseDate.getSeconds();
+
+      this.allChats.push({
+        text: this.message,
+        time: this.postTime,
+        receiver: this.chatName,
+        response: this.responseMessage,
+        responseTime: this.responseTime,
+      });
+
+      this.tempChats.push({
+        text: this.message,
+        time: this.postTime,
+        receiver: this.chatName,
+        response: this.responseMessage,
+        responseTime: this.responseTime,
+      });
     });
   }
 
-  text:string = '';
-
   handleSubmit(e: any) {
     e.preventDefault();
-    alert(this.text);
-    this.post(this.text)
-    this.text = ""
+    if (this.text !== '' && this.text !== ' ') {
+      const time = new Date();
+      this.postTime =
+        time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
+      this.post(this.text);
+      this.text = '';
+    }
   }
 
   handleKeyUp(e: any) {
     if (e.keyCode === 13) {
-      this.handleSubmit(e)
+      this.handleSubmit(e);
     }
   }
 
@@ -159,5 +225,10 @@ export class MainComponent {
     this.getUserDetails().subscribe((userDetails) => {
       this.userDetails = userDetails;
     });
+  }
+
+  logout(): void {
+    localStorage.removeItem('log');
+    this.router.navigate(['./']);
   }
 }

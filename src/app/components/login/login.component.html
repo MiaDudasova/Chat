@@ -2,13 +2,13 @@
   <div class="loginBg">
     <div class="loginContent">
       <h3 class="loginHeader">Login</h3>
-      <div class="inputs">
-        <label class="label" for="firstName">First Name</label>
-        <input class="input" type="text" placeholder="Your first name..." />
-        <label class="label" for="lastName">Last Name</label>
-        <input class="input" type="text" placeholder="Your last name..." />
-        <input class="submit" type="submit" />
-      </div>
+      <form class="inputs" (submit)="login(firstName.value,lastName.value)">
+        <label class="label">First Name</label>
+        <input name="firstName" #firstName class="input" type="text" placeholder="Your first name..." />
+        <label class="label">Last Name</label>
+        <input name="lastName" #lastName class="input" type="text" placeholder="Your last name..." />
+        <input class="submit" type="submit" value="Login" />
+      </form>
     </div>
   </div>
 </div>

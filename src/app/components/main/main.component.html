@@ -2,18 +2,18 @@
   <div class="header">
     <div class="userInfo">
       <div class="name">
-        <p class="firstName">First Name</p>
-        <p class="lastName">Last Name</p>
+        <p class="firstName">{{ loggedFirstName }}</p>
+        <p class="lastName">{{ loggedLastName }}</p>
       </div>
-      <p class="logTime">Login Time</p>
+      <p class="logTime">{{ loggedTime }}</p>
     </div>
     <div class="loggedInfo">
       <p class="clicks">Clicks: {{ clickCount }}</p>
       <p class="chars">Characters: {{ charCount }}</p>
-      <p class="chats">Chats opened: 0</p>
+      <p class="chats">Chats opened: {{ chatsCount }}</p>
     </div>
     <div class="logout">
-      <div class="logoutButton">Logout</div>
+      <div class="logoutButton" (click)="logout()">Logout</div>
     </div>
   </div>
   <div class="body">
@@ -28,7 +28,8 @@
           </div>
           <div
             class="startChat"
-            (click)="showChat = true; chatName = user.username"
+            (click)="tempChats = []; showChat = true; chatName = user.username"
+            (click)="chatsOpened()"
           >
             Start chat
           </div>
@@ -36,6 +37,28 @@
       </div>
     </div>
     <div class="mid">
+      <div class="messages" *ngIf="detailShow == false">
+        <div *ngFor="let message of allChats" class="message">
+          <div class="myMessage">
+            <div class="autor">Me:</div>
+            <div class="text">
+              {{ message.text }}
+            </div>
+            <div class="time">
+              {{ message.time }}
+            </div>
+          </div>
+          <div class="response">
+            <div class="autor">{{ message.receiver }}:</div>
+            <div class="text">
+              {{ message.response }}
+            </div>
+            <div class="time">
+              {{ message.responseTime }}
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="userDetails" *ngIf="detailShow == true">
         <div class="topPanel">
           <h3 class="details">Details</h3>
@@ -87,13 +110,33 @@
       </div>
     </div>
     <div class="right">
+      <div class="rightt" *ngIf="showChat == false">
+        <img src="../../../assets/images/chat.svg" alt="Chat bubble" />
+      </div>
       <div class="chat" *ngIf="showChat == true">
         <div class="topPanel">
           <h3 class="name">{{ chatName }}</h3>
           <h6 class="closeChat" (click)="closeChat()">X</h6>
         </div>
         <div class="messages">
-          <div class="message">{{responseText}}</div>
+          <div *ngFor="let message of tempChats" class="message">
+            <div class="myMessage">
+              <div class="text">
+                {{ message.text }}
+              </div>
+              <div class="time">
+                {{ message.time }}
+              </div>
+            </div>
+            <div class="response">
+              <div class="text">
+                {{ message.response }}
+              </div>
+              <div class="time">
+                {{ message.responseTime }}
+              </div>
+            </div>
+          </div>
         </div>
         <div class="chatInput">
           <form class="chat" (ngSubmit)="handleSubmit($event)">
