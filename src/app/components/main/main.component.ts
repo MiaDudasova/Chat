@@ -56,7 +56,6 @@ export class MainComponent {
           user.firstName !== this.loggedFirstName &&
           user.lastName !== this.loggedLastName
       );
-      console.log(users);
     });
 
     this.getUserDetails().subscribe((userDetails) => {
@@ -73,7 +72,6 @@ export class MainComponent {
 
     if (this.loggedInTime !== null) {
       this.splittedLoggedTime = this.loggedInTime.split(' ');
-      console.log(this.splittedLoggedTime);
       this.loggedTime =
         this.splittedLoggedTime[2] +
         ' ' +
@@ -140,7 +138,6 @@ export class MainComponent {
 
   post(bodyText: string) {
     this.postMessage(bodyText).subscribe((response) => {
-      console.log(response);
       this.message = response.json.text;
       this.lenJsonText = response.json.text.length;
       this.lastOriginNum = Number(response.origin.slice(-1));
@@ -169,12 +166,10 @@ export class MainComponent {
         responseTime: this.responseTime,
       });
 
-      console.log(this.allChats);
       this.totalLenResponses = this.allChats.reduce(
         (acc, cur) => acc + cur.response.length,
         0
       );
-      console.log(this.totalLenResponses);
     });
   }
 
@@ -199,11 +194,11 @@ export class MainComponent {
     this.userId = newUserId;
     this.getUserDetails().subscribe((userDetails) => {
       this.userDetails = userDetails;
-      this.getData()
+      this.getData();
     });
     this.detailShow = true;
   }
- 
+
   getData() {
     this.httpClient
       .get(
@@ -249,7 +244,6 @@ export class MainComponent {
   hideData() {
     this.showMoreData = false;
   }
-
 
   async onClick(): Promise<void> {
     this.clickCount++;
