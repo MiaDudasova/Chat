@@ -23,7 +23,7 @@ export class MainComponent {
   userDetails: any = {};
   genderData: any = {};
   zipData: any = {};
-  showMoreData: boolean = false;
+  showMoreData: boolean = true;
   detailShow: boolean = false;
   chatName: string = '';
   showChat: boolean = false;
@@ -47,6 +47,7 @@ export class MainComponent {
   secondsLogged: number = 0;
   minutesLogged: number = 0;
   hoursLogged: number = 0;
+  detailId: number = 0;
 
   constructor(private httpClient: HttpClient, private router: Router) {
     this.getUsers().subscribe((users) => {
@@ -91,16 +92,8 @@ export class MainComponent {
     });
   }
 
-  closeDetail() {
-    this.detailShow = false;
-  }
-
-  closeChat() {
-    this.tempChats = [];
-    this.showChat = false;
-  }
-
-  userClick() {
+  userClick(id: number) {
+    this.detailId = id;
     if (this.userClicked == false) {
       this.userClicked = true;
     } else if (this.userClicked == true) {
@@ -122,14 +115,6 @@ export class MainComponent {
     this.prevInputValue = inputValue;
   }
 
-  async onClick(): Promise<void> {
-    this.clickCount++;
-  }
-
-  async chatsOpened(): Promise<void> {
-    this.chatsCount++;
-  }
-
   getUserDetails(): Observable<User[]> {
     return this.httpClient
       .get('https://dummyjson.com/users/' + this.userId.toString())
@@ -146,27 +131,6 @@ export class MainComponent {
         tap((userId) => subject.next(userId)),
         switchMap(() => subject)
       );
-  }
-
-  getData() {
-    console.log('getting bonus');
-
-    this.httpClient
-      .get(
-        'https://api.zippopotam.us/us/' +
-          this.userDetails.company.address.postalCode
-      )
-      .subscribe((zipData: any) => {
-        this.zipData = zipData;
-      });
-
-    this.httpClient
-      .get('https://api.genderize.io/?name=' + this.userDetails.firstName)
-      .subscribe((genderData: any) => {
-        this.genderData = genderData;
-      });
-
-    this.showMoreData = true;
   }
 
   postMessage(bodyText: string) {
@@ -231,17 +195,31 @@ export class MainComponent {
     }
   }
 
-  hideData() {
-    this.showMoreData = false;
-  }
-
   changeUserId(newUserId: number) {
-    this.showMoreData = false;
-    this.detailShow = true;
     this.userId = newUserId;
     this.getUserDetails().subscribe((userDetails) => {
       this.userDetails = userDetails;
+      this.getData()
     });
+    this.detailShow = true;
+  }
+ 
+  getData() {
+    this.httpClient
+      .get(
+        'https://api.zippopotam.us/us/' +
+          this.userDetails.company.address.postalCode
+      )
+      .subscribe((zipData: any) => {
+        this.zipData = zipData;
+      });
+
+    this.httpClient
+      .get('https://api.genderize.io/?name=' + this.userDetails.firstName)
+      .subscribe((genderData: any) => {
+        this.genderData = genderData;
+      });
+    this.showMoreData = true;
   }
 
   logout(): void {
@@ -256,13 +234,37 @@ export class MainComponent {
     }
     if (this.secondsLogged >= 60) {
       this.minutesLogged = Math.floor(this.secondsLogged / 60);
-      this.secondsLogged = this.secondsLogged - Math.floor(60 * this.minutesLogged);
+      this.secondsLogged =
+        this.secondsLogged - Math.floor(60 * this.minutesLogged);
     }
     if (this.minutesLogged >= 60) {
       this.hoursLogged = Math.floor(this.minutesLogged / 60);
-      this.minutesLogged = this.minutesLogged - Math.floor(60 * this.minutesLogged);
+      this.minutesLogged =
+        this.minutesLogged - Math.floor(60 * this.hoursLogged);
     }
     localStorage.removeItem('log');
     this.router.navigate(['./']);
+  }
+
+  hideData() {
+    this.showMoreData = false;
+  }
+
+
+  async onClick(): Promise<void> {
+    this.clickCount++;
+  }
+
+  async chatsOpened(): Promise<void> {
+    this.chatsCount++;
+  }
+
+  closeDetail() {
+    this.detailShow = false;
+  }
+
+  closeChat() {
+    this.tempChats = [];
+    this.showChat = false;
   }
 }

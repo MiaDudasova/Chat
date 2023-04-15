@@ -180,7 +180,7 @@
 
           .message {
             width: 95%;
-            height: fit-content;
+            min-height: fit-content;
             background-color: #47525d;
             border: 2px solid #53f4ff;
             margin: 5px auto;
@@ -320,15 +320,37 @@
         .rightt {
           width: 100%;
           height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
 
-          img {
-            width: 40%;
-            aspect-ratio: 1/1;
-            filter: invert(31%) sepia(16%) saturate(511%) hue-rotate(169deg)
-              brightness(92%) contrast(88%);
+          .topPanel {
+            width: 100%;
+            aspect-ratio: 6.4/1;
+            background-color: #47525d;
+            display: flex;
+            align-items: center;
+
+            .name {
+              width: 100%;
+              height: 100%;
+              margin: 0px;
+              margin-left: 5%;
+              display: flex;
+              align-items: center;
+            }
+          }
+          .image {
+            width: 100%;
+            height: 93%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            img {
+              width: 45%;
+              aspect-ratio: 1/1;
+              filter: invert(31%) sepia(16%) saturate(511%) hue-rotate(169deg)
+                brightness(92%) contrast(88%);
+            }
           }
         }
 
@@ -366,7 +388,6 @@
             flex-direction: column;
             overflow-x: hidden;
             overflow-y: auto;
-
             .message {
               width: 100%;
               height: fit-content;
@@ -394,6 +415,10 @@
                   font-size: 12px;
                   font-weight: 0;
                 }
+              }
+
+              .myMessage {
+                margin-left: auto;
               }
             }
           }
